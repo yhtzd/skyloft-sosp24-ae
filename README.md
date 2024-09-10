@@ -214,7 +214,7 @@ $ cd shenango-client
 # Download and build DPDK
 $ ./dpdk.sh
 # Setup hugepages
-$ ./scripts/setup_machine
+$ sudo ./scripts/setup_machine.sh
 # Setup igb_uio driver
 $ cd dpdk
 $ ./usertools/dpdk-setup.sh
@@ -233,7 +233,7 @@ $ make clean && make -j
 
 # Build synthetic client
 $ cd apps/synthetic
-$ cargo build
+$ cargo build --release
 ```
 
 ## 4. Run Experiments
@@ -453,45 +453,3 @@ $ cd skyloft/scripts
 $ ./build.sh microbench
 $ ./run.sh thread
 ```
-
-## 5. Related Work
-
-### 5.1 ghOSt
-
-First, install the [kernel](https://github.com/google/ghost-kernel). On Ubuntu 18.04, install the generic version 5.11, and then in the `ghost-kernel` directory, run `make oldconfig` and then install.
-
-The `[ghost-userspace](https://github.com/yhtzd/ghost-userspace)` project uses Bazel as the build tool. When attempting to build, the following error occurs:
-
-```log
-ERROR: external/subpar/compiler/BUILD:31:10: in py_binary rule @@subpar//compiler:compiler:
-Traceback (most recent call last):
-    File "/virtual_builtins_bzl/common/python/py_binary_bazel.bzl", line 38, column 36, in _py_binary_impl
-    File "/virtual_builtins_bzl/common/python/py_executable_bazel.bzl", line 97, column 37, in py_executable_bazel_impl
-    File "/virtual_builtins_bzl/common/python/py_executable.bzl", line 108, column 25, in py_executable_base_impl
-    File "/virtual_builtins_bzl/common/python/py_executable.bzl", line 189, column 13, in _validate_executable
-Error in fail: It is not allowed to use Python 2
-```
-
-Directly modifying the `BUILD` file to change the default from PY2 to PY3 resolves the error.
-
-To install `gcc-9`, execute the following commands, as the default `gcc` version is too low to support C++20:
-
-```sh
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-sudo apt update
-sudo apt install gcc-9 g++-9
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
-```
-
-To install `clang-12`, use the following commands:
-
-```sh
-wget https://apt.llvm.org/llvm.sh
-chmod +x llvm.sh
-sudo ./llvm.sh 12
-```
-
-During `sudo apt update`, an issue occurs where an AMD machine attempts to pull ARM64 images. Specify the architecture `[arch=amd64,i386]` in the `source.list`.
-
-An error `error: use of undeclared identifier 'BPF_F_MMAPABLE'` occurs. To resolve this, in the `ghost-kernel` directory, run `sudo make headers_install INSTALL_HDR_PATH=/usr` to overwrite the existing Linux headers.
-
