@@ -243,6 +243,15 @@ GRUB_CMDLINE_LINUX="isolcpus=0-23,48-71 nohz_full=0-23,48-71 intel_iommu=off nop
 
 You can check it through `cat /proc/cmdline`.
 
+The Skyloft kernel module need to be installed with corresponding CPU list argument:
+
+```sh
+cd skyloft/kmod
+CPU_LIST=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 make insmod
+```
+
+You may edit the `CPU_LIST` variable in the kmod Makefile as well.
+
 The `schbench` experiment shows `Skyloft`'s per-CPU scheduler performance, by comparing the 99% wakeup latency of the `schbench` schduler benchmarking tool. This experiment uses 24 CPU cores, running different number of worker threads, ranging from 8 to 96.
 
 The parameters of each build target are listed as follows:
@@ -283,6 +292,8 @@ Before running this and following experiments, remember to change the cmdline to
 ```config
 GRUB_CMDLINE_LINUX="isolcpus=0-21,48-69 nohz_full=0-21,48-69 intel_iommu=off nopat watchdog_thresh=0"
 ```
+
+The Skyloft kernel module need to be installed with the corresponding CPU_LIST argument, which is the default value set in the kmod Makefile.
 
 The `run_synthetic_lc.sh` script runs a single synthetic LC app (`shinjuku`), iterating over different target throughput, with the following parameters:
 
