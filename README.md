@@ -90,15 +90,6 @@ Other software dependencies are provided in our GitHub repositories, and install
 
 **Following instructions are for the Server.**
 
-### 3.0 Check Requirements
-
-Make sure the CPU supports `UINTR`. If it does, the output of the following command is not empty:
-
-```sh
-$ cat /proc/cpuinfo | grep -w uintr
-flags           : fpu vme de ... uintr md_clear serialize tsxldtrk ...
-```
-
 ### 3.1 Clone the AE Repository
 
 ```sh
@@ -134,13 +125,15 @@ Take GRUB as example:
    ```
 
    Remember to select the kernel installed in the previous step when rebooting.
-3. Verify the kernel and parameters are applied (the kernel version string might be different):
+3. Verify the kernel and parameters are applied (the kernel version string might be different), and the `uintr` CPU flag is displayed in `/proc/cpuinfo`:
 
    ```sh
    $ cat /proc/cmdline
    BOOT_IMAGE=/vmlinuz-6.0.0-skyloft-nohzfull+ root=UUID=3f07ca35-20a0-41df-a6c3-96786074c290 ro isolcpus=0-23,48-71 nohz_full=0-23,48-71 intel_iommu=off nopat watchdog_thresh=0 quiet splash console=tty0 console=ttyS0,115200n8 vt.handoff=7
    $ uname -r
    6.0.0-skyloft-nohzfull+
+   $ cat /proc/cpuinfo | grep -w uintr
+   flags           : fpu vme de ... uintr md_clear serialize tsxldtrk ...
    ```
 
 ### 3.4 Install DPDK
